@@ -8,7 +8,7 @@ serverAddress =
 
 serverSocket.bind(serverAddress, serverPort)
 serverSocket.listen(20)
-userList = []
+clientList = []
 
 def userThread(connection, address):
     connection.send("This is the public chatroom")
@@ -18,21 +18,23 @@ def userThread(connection, address):
             if message:
                 #extract message content
                 messageContent =
-                # publish the message
+                #publish the message
                 publish(messageContent, connection)
-        except IOError: #remove user from chat room
-            if connection in userList: userList.remove(connection)
+        except IOError: #remove user from chat room if there is no response
+            if connection in clientList: clientList.remove(connection)
 while True:
  #handle new connection = user
     connection, addr = serverSocket.accept()
-    userList.append(connection)
+    clientList.append(connection)
     start_new_thread(userThread,(connection,addr)) #create a new thread for each arriving connection
 
 def publish(message, connection):
-    for client in userList:
-        if client != connection:
+    for user in clientList:
+        if user != connection:
             try:
-                client.send(message)
+                msgheader =
+                message = msgheader + message
+                user.send(message)
             except:
-                client.close()
-                userList.remove(connection)
+                user.close()
+                clientList.remove(connection)
