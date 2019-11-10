@@ -40,7 +40,7 @@
       </list>
     </option>
   </component>
-  <component name="RunManager" selected="Python.web-server">
+  <component name="RunManager" selected="Python.test">
     <configuration name="server" type="PythonConfigurationType" factoryName="Python" temporary="true">
       <module name="WebServer" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -95,7 +95,7 @@
       <option name="IS_MODULE_SDK" value="false" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/test.py" />
+      <option name="SCRIPT_NAME" value="D:\Dev\Projects\ChatRoom\user-client.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -148,8 +148,8 @@
     </configuration>
     <recent_temporary>
       <list>
-        <item itemvalue="Python.web-server" />
         <item itemvalue="Python.test" />
+        <item itemvalue="Python.web-server" />
         <item itemvalue="Python.server" />
         <item itemvalue="Python.web-server" />
         <item itemvalue="Python.server" />
@@ -189,6 +189,11 @@
           <url>file://$PROJECT_DIR$/../NetworkingAssignment/web-server.py</url>
           <line>25</line>
           <option name="timeStamp" value="1" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/user-client.py</url>
+          <line>14</line>
+          <option name="timeStamp" value="7" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>
