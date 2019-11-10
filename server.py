@@ -8,6 +8,7 @@ serverAddress =
 
 serverSocket.bind(serverAddress, serverPort)
 serverSocket.listen(20)
+
 clientList = []
 
 def userThread(connection, address):
