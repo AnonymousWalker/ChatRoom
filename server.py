@@ -4,38 +4,44 @@ from _thread import *
 serverSocket = socket(AF_INET, SOCK_STREAM)
 
 serverPort = 5555
-serverAddress =
+serverAddress = gethostbyname(gethostname())    #server ip
 
-serverSocket.bind(serverAddress, serverPort)
-serverSocket.listen(20)
+serverSocket.bind((serverAddress, serverPort))
+serverSocket.listen(20)     #number of connections are allowed, enabled phase
 
-clientList = []
+clientList = []     #list of client (address,username)
 
+#thread for handling one user connection
 def userThread(connection, address):
-    connection.send("This is the public chatroom")
+    connection.send(("Welcome "+ address[0] +", this is the public chatroom!").encode())
     while True:
         try:
-            message = connection.receive(1024)
+            message = connection.recv(1024).decode()
+            print(message)
             if message:
-                #extract message content
-                messageContent =
-                #publish the message
-                publish(messageContent, connection)
-        except IOError: #remove user from chat room if there is no response
-            if connection in clientList: clientList.remove(connection)
-while True:
- #handle new connection = user
-    connection, addr = serverSocket.accept()
-    clientList.append(connection)
-    start_new_thread(userThread,(connection,addr)) #create a new thread for each arriving connection
+                #extract message data
+                message = message.split('\r\n')
+                username = message[2].split()[1]
+                messageContent = message[3][9:]
+                publish(messageContent, username)
+        except IOError: #remove user from chat room if there is an error/timeout
+            if connection in clientList:
+                clientList.close()
 
 def publish(message, connection):
     for user in clientList:
-        if user != connection:
+        # if user != connection:
+        if True:
             try:
-                msgheader =
-                message = msgheader + message
-                user.send(message)
-            except:
-                user.close()
+                msgheader = "UNameL: 2\r\nMessageL: 4\r\nUsername: "+ connection +"\r\nMessage: "+ message +"\r\n"
+                user.send(msgheader.encode())
+            except IOError:
+                # user.close()
                 clientList.remove(connection)
+
+#server establish new incoming connections
+while True:
+    connection, cAddress = serverSocket.accept()
+    clientList.append(connection) #add new connection list
+    start_new_thread(userThread,(connection,cAddress)) #create a new thread for each arriving connection
+
