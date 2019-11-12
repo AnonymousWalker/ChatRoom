@@ -8,7 +8,7 @@ serverPort = 5555
 serverAddress = gethostbyname(gethostname())    #server ip
 
 serverSocket.bind((serverAddress, serverPort))
-serverSocket.listen(20)     #number of connections are allowed, enabled phase
+serverSocket.listen(1)     #number of connections are allowed, enabled phase
 
 clientList = {}     #list of client (address,username)
 
@@ -37,7 +37,7 @@ def userThread(connection, address, username):
                 publish(disconnectMsg, connection, "[system]")
                 connection.close()
                 del clientList[connection]
-                #clientList.remove(connection)
+
 
 def publish(message, connection, username):
     for user in clientList:
@@ -50,6 +50,8 @@ def publish(message, connection, username):
                 #clientList.remove(connection)
                 break
 
+def sizeof(data):
+    return len(data.encode('utf-8'))
 
 #server establish new incoming connections
 while True:
