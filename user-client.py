@@ -1,6 +1,6 @@
 from socket import *
 from threading import *
-
+import os
 username = input("Please enter your username: ")
 
 clientSocket = socket(AF_INET, SOCK_STREAM)
@@ -9,24 +9,30 @@ clientSocket.send(username.encode())
 msg = clientSocket.recv(1024).decode()  #welcome message from server
 print(msg)
 
+#thread to send msg
 def sendMessage(sock):
     while True:
-        messageToSend = input(str("Enter your message: "))
-        print("Me: " + messageToSend)
+        messageToSend = input()
+        if messageToSend == "/signout":
+            sock.close()
+            os._exit(1)
         msgheader = "UNameL: 2\r\nMessageL: 4\r\nUsername: " + username + "\r\nMessage: " + messageToSend + "\r\n"
         sock.send(msgheader.encode())
 
+#thread to recv msg
 def receiveMessage(sock):
     while True:
         message = sock.recv(1024).decode()  # wait for other message
         message= message.split('\r\n')
         senderName = message[2].split()[1]
         messageContent = message[3].split(' ',1)[1]
-        print("<"+senderName + "> " + messageContent)
+        if senderName == '[system]':
+            print("---"+messageContent+"---")
+        else:
+            print("<"+senderName + ">\t" + messageContent)
 
 Thread(target=sendMessage, args=(clientSocket,)).start()
 Thread(target=receiveMessage, args=(clientSocket,)).start()
-
 
 # while True:
 #     try:
