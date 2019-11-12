@@ -40,7 +40,7 @@
       </list>
     </option>
   </component>
-  <component name="RunManager" selected="Python.user-client">
+  <component name="RunManager" selected="Python.chat-server">
     <configuration name="chat-server" type="PythonConfigurationType" factoryName="Python" temporary="true">
       <module name="ChatRoom" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -197,8 +197,8 @@
     </list>
     <recent_temporary>
       <list>
-        <item itemvalue="Python.user-client" />
         <item itemvalue="Python.chat-server" />
+        <item itemvalue="Python.user-client" />
         <item itemvalue="Python.server" />
         <item itemvalue="Python.web-server" />
         <item itemvalue="Python.test" />
@@ -240,6 +240,13 @@
           <option name="timeStamp" value="1" />
         </line-breakpoint>
       </breakpoints>
+      <default-breakpoints>
+        <breakpoint type="python-exception">
+          <properties notifyOnTerminate="true" exception="BaseException">
+            <option name="notifyOnTerminate" value="true" />
+          </properties>
+        </breakpoint>
+      </default-breakpoints>
     </breakpoint-manager>
   </component>
 </project>
