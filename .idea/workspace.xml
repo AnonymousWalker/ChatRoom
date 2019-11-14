@@ -40,7 +40,7 @@
       </list>
     </option>
   </component>
-  <component name="RunManager" selected="Python.chat-server">
+  <component name="RunManager" selected="Python.user-client">
     <configuration name="chat-server" type="PythonConfigurationType" factoryName="Python" temporary="true">
       <module name="ChatRoom" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -189,16 +189,16 @@
       <method v="2" />
     </configuration>
     <list>
-      <item itemvalue="Python.server" />
       <item itemvalue="Python.chat-server" />
+      <item itemvalue="Python.server" />
       <item itemvalue="Python.test" />
-      <item itemvalue="Python.web-server" />
       <item itemvalue="Python.user-client" />
+      <item itemvalue="Python.web-server" />
     </list>
     <recent_temporary>
       <list>
-        <item itemvalue="Python.chat-server" />
         <item itemvalue="Python.user-client" />
+        <item itemvalue="Python.chat-server" />
         <item itemvalue="Python.server" />
         <item itemvalue="Python.web-server" />
         <item itemvalue="Python.test" />

@@ -32,7 +32,7 @@ def userThread(connection, address, username):
         except IOError:
             #remove user from chat room if there is an error/timeout
             if connection in clientList:
-                disconnectMsg = clientList[connection] + " has disconnected!"
+                disconnectMsg = clientList[connection]["username"] + " has disconnected!"
                 print(disconnectMsg)
                 publish(disconnectMsg, connection, "[system]")
                 connection.close()
@@ -47,17 +47,13 @@ def publish(message, connection, username):
                 msgheader = "UNameL: 2\r\nMessageL: 4\r\nUsername: "+ username +"\r\nMessage: "+ message +"\r\n"
                 user.send(msgheader.encode())
             except IOError:
-                #clientList.remove(connection)
                 break
 
-def sizeof(data):
-    return len(data.encode('utf-8'))
 
 #server establish new incoming connections
 while True:
     connection, cAddress = serverSocket.accept()
     username = connection.recv(20).decode()
-    #clientList.append(connection) #add new connection list
-    clientList[connection] = username
+    clientList[connection] = {"username":username, "address": cAddress}
     #start_new_thread(userThread,(connection,cAddress)) #create a new thread for each arriving connection
     Thread(target=userThread, args=(connection, cAddress, username)).start()

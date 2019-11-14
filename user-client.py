@@ -13,9 +13,10 @@ def sendMessage(sock):
         messageToSend = input()
         if messageToSend == "/signout":
             sock.close()
-            os._exit(1)
+            return False
+        uNameLen = sizeof(username)
         msgLen = sizeof(messageToSend)
-        if msgLen > 4294967296: #msg max length is 4 bytes 4,294,967,296
+        if msgLen > 4294967295: #msg max length is 4 bytes = 4,294,967,296
             print("(Error!) Your message is too long, plesase try again!")
             continue
         msgheader = "UNameL: "+str(uNameLen)+"\r\nMessageL: " + str(msgLen) + "\r\nUsername: " + username + "\r\nMessage: " + messageToSend + "\r\n"
@@ -39,11 +40,9 @@ def receiveMessage(sock):
 
 
 username = input("Please enter your username: ")
-uNameLen = sizeof(username)
-#Validate uname length: 2 bytes
-while uNameLen > 65535:
+#Validate uname length: 2 bytes = 2^16 MAX
+while sizeof(username) > 65535:
     username = input("Username is too long, please try again: ")
-    uNameLen = sizeof(username)
 clientSocket = socket(AF_INET, SOCK_STREAM)
 host = input("Enter the server address to connect: ")
 port = input("Enter server port number: ")
