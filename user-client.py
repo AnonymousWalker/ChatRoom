@@ -15,7 +15,7 @@ def sendMessage(sock):
             sock.close()
             os._exit(1)
         msgLen = sizeof(messageToSend)
-        if msgLen > 5: #msg max length is 4 bytes 4,294,967,296
+        if msgLen > 4294967296: #msg max length is 4 bytes 4,294,967,296
             print("(Error!) Your message is too long, plesase try again!")
             continue
         msgheader = "UNameL: "+str(uNameLen)+"\r\nMessageL: " + str(msgLen) + "\r\nUsername: " + username + "\r\nMessage: " + messageToSend + "\r\n"
@@ -25,7 +25,10 @@ def sendMessage(sock):
 # thread to recv msg
 def receiveMessage(sock):
     while True:
-        message = sock.recv(1024).decode()  # wait for other message
+        try:
+            message = sock.recv(1024).decode()  # wait for other message
+        except:
+            print("You have been disconnected!")
         message = message.split('\r\n')
         senderName = message[2].split()[1]
         messageContent = message[3].split(' ', 1)[1]
@@ -38,13 +41,13 @@ def receiveMessage(sock):
 username = input("Please enter your username: ")
 uNameLen = sizeof(username)
 #Validate uname length: 2 bytes
-while uNameLen > 5: #65535:
+while uNameLen > 65535:
     username = input("Username is too long, please try again: ")
     uNameLen = sizeof(username)
 clientSocket = socket(AF_INET, SOCK_STREAM)
 host = input("Enter the server address to connect: ")
 port = input("Enter server port number: ")
-clientSocket.connect((host, port))
+clientSocket.connect((host, int(port)))
 clientSocket.send(username.encode())
 msg = clientSocket.recv(1024).decode()  # welcome message from server
 print(msg)
