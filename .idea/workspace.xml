@@ -40,8 +40,8 @@
       </list>
     </option>
   </component>
-  <component name="RunManager" selected="Python.user-client">
-    <configuration name="chat-server" type="PythonConfigurationType" factoryName="Python" temporary="true">
+  <component name="RunManager" selected="Python.chat-server">
+    <configuration name="chat-server" type="PythonConfigurationType" factoryName="Python">
       <module name="ChatRoom" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
@@ -125,7 +125,7 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
-    <configuration name="user-client" type="PythonConfigurationType" factoryName="Python" temporary="true">
+    <configuration name="user-client" type="PythonConfigurationType" factoryName="Python">
       <module name="ChatRoom" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
@@ -190,15 +190,13 @@
     </configuration>
     <list>
       <item itemvalue="Python.chat-server" />
+      <item itemvalue="Python.user-client" />
       <item itemvalue="Python.server" />
       <item itemvalue="Python.test" />
-      <item itemvalue="Python.user-client" />
       <item itemvalue="Python.web-server" />
     </list>
     <recent_temporary>
       <list>
-        <item itemvalue="Python.user-client" />
-        <item itemvalue="Python.chat-server" />
         <item itemvalue="Python.server" />
         <item itemvalue="Python.web-server" />
         <item itemvalue="Python.test" />
