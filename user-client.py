@@ -13,7 +13,7 @@ def sendMessage(sock):
         messageToSend = input()
         if messageToSend == "/signout":
             sock.close()
-            return False
+            os._exit(1)
         uNameLen = sizeof(username)
         msgLen = sizeof(messageToSend)
         if msgLen > 4294967295: #msg max length is 4 bytes = 4,294,967,296
@@ -28,8 +28,10 @@ def receiveMessage(sock):
     while True:
         try:
             message = sock.recv(1024).decode()  # wait for other message
-        except:
+        except IOError:
             print("You have been disconnected!")
+            os._exit(1)
+            break
         message = message.split('\r\n')
         senderName = message[2].split()[1]
         messageContent = message[3].split(' ', 1)[1]

@@ -2,13 +2,13 @@ from socket import *
 from _thread import *
 from threading import *
 
+CONNECTION_LIMIT = 10
 serverSocket = socket(AF_INET, SOCK_STREAM)
-
 serverPort = 5555
 serverAddress = gethostbyname(gethostname())    #server ip
 
 serverSocket.bind((serverAddress, serverPort))
-serverSocket.listen(1)     #number of connections are allowed, enabled phase
+serverSocket.listen(20)
 
 clientList = {}     #list of client (address,username)
 
@@ -47,12 +47,17 @@ def publish(message, connection, username):
                 msgheader = "UNameL: 2\r\nMessageL: 4\r\nUsername: "+ username +"\r\nMessage: "+ message +"\r\n"
                 user.send(msgheader.encode())
             except IOError:
-                break
+                if user in clientList.keys():
+                    del clientList[user]
 
 
 #server establish new incoming connections
 while True:
     connection, cAddress = serverSocket.accept()
+    if len(clientList) >= CONNECTION_LIMIT:
+        connection.send("Chat room is full at the moment, please try again later!".encode())
+        connection.close()
+        continue
     username = connection.recv(20).decode()
     clientList[connection] = {"username":username, "address": cAddress}
     #start_new_thread(userThread,(connection,cAddress)) #create a new thread for each arriving connection
