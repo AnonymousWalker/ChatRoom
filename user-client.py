@@ -27,16 +27,16 @@ def receiveMessage(sock):
             os._exit(1)
             break
         message = message.split('\r\n')
-        senderName = message[2].split()[1]
-        messageContent = message[3].split(' ', 1)[1]
+        senderName = message[3].split()[1]
+        messageContent = message[4].split(' ', 1)[1]
         if senderName == '[system]':
             print("---" + messageContent + "---")
         else:
             print("[" + senderName + "]\t" + messageContent)
 
 
-def formatMessage(username, message):
-    return "UNameL: "+ str(len(username)) +"\r\nMessageL: "+ str(len(message)) +"\r\nUsername: " + username + "\r\nMessage: " + message + "\r\n"
+def formatMessage(username, message, msgType="msg"):
+    return "UNameL: "+ str(len(username)) +"\r\nMessageL: "+ str(len(message)) +"\r\nMessageType: "+ msgType +"\r\nUsername: " + username + "\r\nMessage: " + message
 
 
 username = input("Please enter your username: ")
@@ -48,18 +48,19 @@ clientSocket = socket(AF_INET, SOCK_STREAM)
 host = input("Enter the server address to connect: ")
 port = input("Enter server port number: ")
 clientSocket.connect((host, int(port)))
-clientSocket.send(username.encode())
+unameMsg = formatMessage(username,"","cmd")
+clientSocket.send(unameMsg.encode())
 
 cmd = input('>> Use the following command:\r\n\t/join : access public chatroom; \r\n\t/fetch : See active users;\r\n\t/connect/ip/port : invite user to private message;\r\n\t/exit : close application.\r\n')
 if cmd == '/exit':
     clientSocket.close()
     os._exit(1)
 else:
-    msg = formatMessage(username,cmd)
+    msg = formatMessage(username,cmd, "cmd")
     clientSocket.send(msg.encode())
 
 msg = clientSocket.recv(1024).decode()  # welcome message from server
-welcomeMsg = msg.split('\r\n',3)[3].split(' ', 1)[1]
+welcomeMsg = msg.split('\r\n',4)[4].split(' ', 1)[1]
 print(welcomeMsg)
 
 Thread(target=sendMessage, args=(clientSocket,)).start()

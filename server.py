@@ -26,8 +26,8 @@ def userThread(connection, address, username):
             if message:
                 #extract message data
                 message = message.split('\r\n')
-                senderName = message[2].split()[1]
-                messageContent = message[3].split(' ',1)[1]
+                senderName = message[3].split()[1]
+                messageContent = message[4].split(' ',1)[1]
                 publish(messageContent, connection, senderName)
         except IOError:
             #remove user from chat room if there is an error/timeout
@@ -50,8 +50,8 @@ def publish(message, connection, username):
                 if user in clientList.keys():
                     del clientList[user]
 
-def formatMessage(username, message):
-    return "UNameL: "+ str(len(username)) +"\r\nMessageL: "+ str(len(message)) +"\r\nUsername: " + username + "\r\nMessage: " + message + "\r\n"
+def formatMessage(username, message, msgType="msg"):
+    return "UNameL: "+ str(len(username)) +"\r\nMessageL: "+ str(len(message)) +"\r\nMessageType: "+ msgType +"\r\nUsername: " + username + "\r\nMessage: " + message
 
 
 #server establish new incoming connections
@@ -65,7 +65,8 @@ while True:
         connection.close()
         continue
 
-    username = connection.recv(1024).decode()     #recv username
+    unameMsg = connection.recv(1024).decode()     #recv username
+    username = unameMsg.split('\r\n')[3].split()[1]
     command = connection.recv(1024).decode()
     print(command)
 
