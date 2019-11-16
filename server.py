@@ -12,12 +12,12 @@ serverSocket.listen(20)
 
 clientList = {}     #list of client (address,username)
 
-#thread for handling one user connection
+#thread for one user connection
 def userThread(connection, address, username):
-    connection.send(("Welcome "+ username +", this is the public chatroom. Use '/signout' to exit. Type your message below\r\n------------").encode())
     cnnNotification = username+" ("+address[0]+") has joined the chat room"
     print(cnnNotification)
     publish(cnnNotification, connection, "[system]")
+
     while True:
         try:
             #waiting for client message
@@ -44,21 +44,34 @@ def publish(message, connection, username):
         if user != connection:
         #if True:
             try:
-                msgheader = "UNameL: 2\r\nMessageL: 4\r\nUsername: "+ username +"\r\nMessage: "+ message +"\r\n"
+                msgheader = formatMessage(username, message)
                 user.send(msgheader.encode())
             except IOError:
                 if user in clientList.keys():
                     del clientList[user]
 
+def formatMessage(username, message):
+    return "UNameL: "+ str(len(username)) +"\r\nMessageL: "+ str(len(message)) +"\r\nUsername: " + username + "\r\nMessage: " + message + "\r\n"
+
 
 #server establish new incoming connections
 while True:
     connection, cAddress = serverSocket.accept()
+
+    #check room capacity
     if len(clientList) >= CONNECTION_LIMIT:
-        connection.send("Chat room is full at the moment, please try again later!".encode())
+        msg = "Chat room is full at the moment, please try again later!"
+        connection.send(format("[server]", msg).encode())
         connection.close()
         continue
-    username = connection.recv(20).decode()
-    clientList[connection] = {"username":username, "address": cAddress}
-    #start_new_thread(userThread,(connection,cAddress)) #create a new thread for each arriving connection
+
+    username = connection.recv(1024).decode()     #recv username
+    command = connection.recv(1024).decode()
+    print(command)
+
+    welcomeMsg = "Welcome "+ username +", this is the public chatroom. Use '/signout' to exit. Type your message below\r\n------------"
+    connection.send(formatMessage("[server]", welcomeMsg).encode())
+
+    clientList[connection] = {"username": username, "address": cAddress}
+    #create a new thread for each arriving connection
     Thread(target=userThread, args=(connection, cAddress, username)).start()

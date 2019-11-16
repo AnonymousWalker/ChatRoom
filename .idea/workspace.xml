@@ -24,9 +24,17 @@
   <component name="ProjectId" id="1TJo9iZSWRp3BFPisfMiqyiefTN" />
   <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
   <component name="PropertiesComponent">
-    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/venv/Scripts/python.exe" />
     <property name="restartRequiresConfirmation" value="false" />
-    <property name="settings.editor.selected.configurable" value="com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable" />
+    <property name="settings.editor.selected.configurable" value="editor.preferences.fonts.default" />
+  </component>
+  <component name="PyConsoleOptionsProvider">
+    <option name="myPythonConsoleState">
+      <console-settings module-name="ChatRoom" sdk-home="D:\Dev\Projects\ChatRoom\venv\Scripts\python.exe">
+        <option name="mySdkHome" value="D:\Dev\Projects\ChatRoom\venv\Scripts\python.exe" />
+        <option name="myModuleName" value="ChatRoom" />
+      </console-settings>
+    </option>
   </component>
   <component name="RunDashboard">
     <option name="ruleStates">
@@ -40,7 +48,7 @@
       </list>
     </option>
   </component>
-  <component name="RunManager" selected="Python.chat-server">
+  <component name="RunManager" selected="Python.user-client">
     <configuration name="chat-server" type="PythonConfigurationType" factoryName="Python">
       <module name="ChatRoom" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -48,7 +56,7 @@
       <envs>
         <env name="PYTHONUNBUFFERED" value="1" />
       </envs>
-      <option name="SDK_HOME" value="S:\Dev\Projects\ChatRoom\venv\Scripts\python.exe" />
+      <option name="SDK_HOME" value="D:\Dev\Projects\ChatRoom\venv\Scripts\python.exe" />
       <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
       <option name="IS_MODULE_SDK" value="false" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
@@ -132,7 +140,7 @@
       <envs>
         <env name="PYTHONUNBUFFERED" value="1" />
       </envs>
-      <option name="SDK_HOME" value="S:\Dev\Projects\ChatRoom\venv\Scripts\python.exe" />
+      <option name="SDK_HOME" value="D:\Dev\Projects\ChatRoom\venv\Scripts\python.exe" />
       <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
       <option name="IS_MODULE_SDK" value="false" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
