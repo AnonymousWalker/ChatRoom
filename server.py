@@ -14,10 +14,6 @@ clientList = {}     #list of client (address,username)
 
 #thread for one user connection
 def userThread(connection, address, username):
-    cnnNotification = username+" ("+address[0]+") has joined the chat room"
-    print(cnnNotification)
-    publish(cnnNotification, connection, "[system]")
-
     while True:
         try:
             #waiting for client message
@@ -25,10 +21,24 @@ def userThread(connection, address, username):
             print(message)
             if message:
                 #extract message data
-                message = message.split('\r\n')
-                senderName = message[3].split()[1]
-                messageContent = message[4].split(' ',1)[1]
-                publish(messageContent, connection, senderName)
+                senderName, msgType, messageContent = extractMsgHeader(message)
+
+                if msgType == 'cmd':
+                    if messageContent == '/join':
+                        cnnNotification = username + " (" + address[0] + ") has joined the chat room"
+                        print(cnnNotification)
+                        connection.send(formatMessage('[system]', "You have joined the public chatroom. Use '/signout' to exit. Type your message below\r\n------------").encode())
+                        publish(cnnNotification, connection, "[system]")
+                    elif messageContent == '/fetch':
+                        print()
+                    elif messageContent.startswith('/connect'):
+                        messageContent = messageContent[1:].split('/')
+                        ip = messageContent[1]
+                        port = messageContent[2]
+                        print(messageContent)
+                else:
+                    publish(messageContent, connection, senderName)
+
         except IOError:
             #remove user from chat room if there is an error/timeout
             if connection in clientList:
@@ -53,6 +63,12 @@ def publish(message, connection, username):
 def formatMessage(username, message, msgType="msg"):
     return "UNameL: "+ str(len(username)) +"\r\nMessageL: "+ str(len(message)) +"\r\nMessageType: "+ msgType +"\r\nUsername: " + username + "\r\nMessage: " + message
 
+def extractMsgHeader(message):
+    message = message.split('\r\n',4)
+    username = message[3].split()[1]
+    messageType = message[2].split()[1]
+    messageContent = message[4].split(' ',1)[1]
+    return (username, messageType, messageContent)
 
 #server establish new incoming connections
 while True:
@@ -67,10 +83,11 @@ while True:
 
     unameMsg = connection.recv(1024).decode()     #recv username
     username = unameMsg.split('\r\n')[3].split()[1]
-    command = connection.recv(1024).decode()
-    print(command)
+    # command = connection.recv(1024).decode()
+    # print(command)
 
-    welcomeMsg = "Welcome "+ username +", this is the public chatroom. Use '/signout' to exit. Type your message below\r\n------------"
+    # welcomeMsg = "Welcome "+ username +", this is the public chatroom. Use '/signout' to exit. Type your message below\r\n------------"
+    welcomeMsg = "Welcome to chat server "+ gethostname()
     connection.send(formatMessage("[server]", welcomeMsg).encode())
 
     clientList[connection] = {"username": username, "address": cAddress}

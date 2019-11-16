@@ -13,7 +13,7 @@ def sendMessage(sock):
         if len(messageToSend) > 4294967295: #msg max length is 4 bytes = 4,294,967,296
             print("(Error!) Your message is too long, plesase try again!")
             continue
-        msgheader = formatMessage(username, messageToSend)
+        msgheader = formatMessage(username, messageToSend, 'cmd' if messageToSend.startswith('/') else 'msg')
         sock.send(msgheader.encode())
 
 
@@ -22,21 +22,26 @@ def receiveMessage(sock):
     while True:
         try:
             message = sock.recv(1024).decode()  # wait for other message
+            senderName, msgType, messageContent = extractMsgHeader(message)
+            if senderName == '[system]':
+                print("---" + messageContent + "---")
+            else:
+                print("[" + senderName + "]\t" + messageContent)
         except IOError:
             print("You have been disconnected!")
             os._exit(1)
             break
-        message = message.split('\r\n')
-        senderName = message[3].split()[1]
-        messageContent = message[4].split(' ', 1)[1]
-        if senderName == '[system]':
-            print("---" + messageContent + "---")
-        else:
-            print("[" + senderName + "]\t" + messageContent)
 
 
 def formatMessage(username, message, msgType="msg"):
     return "UNameL: "+ str(len(username)) +"\r\nMessageL: "+ str(len(message)) +"\r\nMessageType: "+ msgType +"\r\nUsername: " + username + "\r\nMessage: " + message
+
+def extractMsgHeader(message):
+    message = message.split('\r\n',4)
+    username = message[3].split()[1]
+    messageType = message[2].split()[1]
+    messageContent = message[4].split(' ',1)[1]
+    return (username, messageType, messageContent)
 
 
 username = input("Please enter your username: ")
@@ -48,8 +53,13 @@ clientSocket = socket(AF_INET, SOCK_STREAM)
 host = input("Enter the server address to connect: ")
 port = input("Enter server port number: ")
 clientSocket.connect((host, int(port)))
-unameMsg = formatMessage(username,"","cmd")
+
+unameMsg = formatMessage(username, username, 'cmd')
 clientSocket.send(unameMsg.encode())
+
+msg = clientSocket.recv(1024).decode()  # welcome message from server
+welcomeMsg = msg.split('\r\n',4)[4].split(' ', 1)[1]
+print(welcomeMsg)
 
 cmd = input('>> Use the following command:\r\n\t/join : access public chatroom; \r\n\t/fetch : See active users;\r\n\t/connect/ip/port : invite user to private message;\r\n\t/exit : close application.\r\n')
 if cmd == '/exit':
@@ -59,9 +69,6 @@ else:
     msg = formatMessage(username,cmd, "cmd")
     clientSocket.send(msg.encode())
 
-msg = clientSocket.recv(1024).decode()  # welcome message from server
-welcomeMsg = msg.split('\r\n',4)[4].split(' ', 1)[1]
-print(welcomeMsg)
 
 Thread(target=sendMessage, args=(clientSocket,)).start()
 Thread(target=receiveMessage, args=(clientSocket,)).start()
