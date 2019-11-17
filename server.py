@@ -25,12 +25,17 @@ def userThread(connection, address, username):
 
                 if msgType == 'cmd':
                     if messageContent == '/join':
-                        cnnNotification = username + " (" + address[0] + ") has joined the chat room"
-                        print(cnnNotification)
                         connection.send(formatMessage('[system]', "You have joined the public chatroom. Use '/signout' to exit. Type your message below\r\n------------").encode())
-                        publish(cnnNotification, connection, "[system]")
-                    elif messageContent == '/fetch':
-                        print()
+                        notification = username + " (" + address[0] + ") has joined the chat room"
+                        print(notification)
+                        publish(notification, connection, "[system]")
+
+                    elif messageContent == '/fetch':        #display active users
+                        activeList = ""
+                        for user in clientList:
+                            activeList += clientList[user]['username'] +" ("+ clientList[user]['address'][0] +"/"+ str(clientList[user]['address'][1])+")\r\n"
+                        connection.send(formatMessage('[system]', activeList).encode())
+
                     elif messageContent.startswith('/connect'):
                         messageContent = messageContent[1:].split('/')
                         ip = messageContent[1]
@@ -76,7 +81,7 @@ while True:
 
     #check room capacity
     if len(clientList) >= CONNECTION_LIMIT:
-        msg = "Chat room is full at the moment, please try again later!"
+        msg = "Server is full at the moment, please try again later!"
         connection.send(format("[server]", msg).encode())
         connection.close()
         continue

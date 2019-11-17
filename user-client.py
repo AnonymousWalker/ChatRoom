@@ -24,7 +24,7 @@ def receiveMessage(sock):
             message = sock.recv(1024).decode()  # wait for other message
             senderName, msgType, messageContent = extractMsgHeader(message)
             if senderName == '[system]':
-                print("---" + messageContent + "---")
+                print("-------\r\n" + messageContent + "-------")
             else:
                 print("[" + senderName + "]\t" + messageContent)
         except IOError:
@@ -61,15 +61,20 @@ msg = clientSocket.recv(1024).decode()  # welcome message from server
 welcomeMsg = msg.split('\r\n',4)[4].split(' ', 1)[1]
 print(welcomeMsg)
 
-cmd = input('>> Use the following command:\r\n\t/join : access public chatroom; \r\n\t/fetch : See active users;\r\n\t/connect/ip/port : invite user to private message;\r\n\t/exit : close application.\r\n')
-if cmd == '/exit':
-    clientSocket.close()
-    os._exit(1)
-else:
-    msg = formatMessage(username,cmd, "cmd")
-    clientSocket.send(msg.encode())
+while True:
+    cmd = input('>> Use the following command:\r\n\t/join : access public chatroom; \r\n\t/fetch : See active users;\r\n\t/connect/ip/port : invite user to private message;\r\n\t/exit : close application.\r\n')
+
+    if cmd == '/exit':
+        clientSocket.close()
+        os._exit(1)
+    else:
+        msg = formatMessage(username, cmd, "cmd")
+        clientSocket.send(msg.encode())     #send command
+        response = clientSocket.recv(1024).decode()     #recv server response
+        sender, msgType, msgContent = extractMsgHeader(response)
 
 
+#join chatroom
 Thread(target=sendMessage, args=(clientSocket,)).start()
 Thread(target=receiveMessage, args=(clientSocket,)).start()
 
