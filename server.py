@@ -20,26 +20,32 @@ def userThread(connection, address, username):
             message = connection.recv(1024).decode()
             print(message)
             if message:
-                #extract message data
                 senderName, msgType, messageContent = extractMsgHeader(message)
 
                 if msgType == 'cmd':
                     if messageContent == '/join':
-                        connection.send(formatMessage('[system]', "You have joined the public chatroom. Use '/signout' to exit. Type your message below\r\n------------").encode())
+                        connection.send(formatMessage('[system]', "You have joined the public chatroom. Use '/signout' to exit. Type your message below\r\n").encode())
                         notification = username + " (" + address[0] + ") has joined the chat room"
                         print(notification)
                         publish(notification, connection, "[system]")
 
                     elif messageContent == '/fetch':        #display active users
-                        activeList = ""
+                        activeList = "Active users:\r\n"
                         for user in clientList:
-                            activeList += clientList[user]['username'] +" ("+ clientList[user]['address'][0] +"/"+ str(clientList[user]['address'][1])+")\r\n"
+                            activeList += clientList[user]['username'] +" ("+ clientList[user]['ip']+"/"+ str(clientList[user]['port'])+")\r\n"
                         connection.send(formatMessage('[system]', activeList).encode())
 
-                    elif messageContent.startswith('/connect'):
+                    elif messageContent.startswith('/connect'):     #forward invitation
                         messageContent = messageContent[1:].split('/')
                         ip = messageContent[1]
                         port = messageContent[2]
+
+                        #find client in list
+                        for conn in clientList:
+                            if clientList[conn]['ip'] == ip and clientList[conn]['port'] == int(port):
+                                forwdMsg = formatMessage('[system]', username+"("+ ip +"/"+ port +") invited you to private message.\r\nType '/connect/ip/port' to accept.")
+                                conn.send(forwdMsg.encode())
+                                break
                         print(messageContent)
                 else:
                     publish(messageContent, connection, senderName)
@@ -95,6 +101,6 @@ while True:
     welcomeMsg = "Welcome to chat server "+ gethostname()
     connection.send(formatMessage("[server]", welcomeMsg).encode())
 
-    clientList[connection] = {"username": username, "address": cAddress}
+    clientList[connection] = {"username": username, "ip": cAddress[0], "port": cAddress[1]}
     #create a new thread for each arriving connection
     Thread(target=userThread, args=(connection, cAddress, username)).start()
