@@ -7,12 +7,15 @@ import os
 def sendMessage(sock):
     while True:
         messageToSend = input()
-        if messageToSend == "/signout":
-            sock.close()
-            os._exit(1)
         if len(messageToSend) > 4294967295:  # msg max length is 4 bytes = 4,294,967,296
             print("(Error!) Your message is too long, plesase try again!")
             continue
+        if messageToSend.startswith("/accept"):
+            os.system('cls')
+            print("You have join a private conversation. Type '/esc' to quit.")
+        elif messageToSend == "/esc":
+            sock.close()
+            os._exit(1)
         msgheader = formatMessage(username, messageToSend, 'cmd' if messageToSend.startswith('/') else 'msg')
         sock.send(msgheader.encode())
 
@@ -60,9 +63,9 @@ clientSocket.connect((host, int(port)))
 unameMsg = formatMessage(username, username, 'cmd')
 clientSocket.send(unameMsg.encode())
 
-msg = clientSocket.recv(1024).decode()  # welcome message from server
-welcomeMsg = msg.split('\r\n', 4)[4].split(' ', 1)[1]
-print(welcomeMsg)
+welcomeMsg = clientSocket.recv(1024).decode()  # welcome message from server
+sender, type, welcome = extractMsgHeader(welcomeMsg)
+print(welcome)
 print(
     '>> Use the following command:\r\n\t/join : access public chatroom\r\n\t/fetch : see active users\r\n\t/connect/ip/port : invite user to private message\r\n\t/exit : close application.\r\n')
 
@@ -72,18 +75,33 @@ while True:
         if cmd == '/exit':
             clientSocket.close()
             os._exit(1)
-        msg = formatMessage(username, cmd, "cmd")
-        clientSocket.send(msg.encode())  # send command
 
-        response = clientSocket.recv(1024).decode()  # recv server response
-        sender, msgType, msgContent = extractMsgHeader(response)
-        print(msgContent)
-        if cmd == '/join':
+        elif cmd == '/join':
+            cmdMsg = formatMessage(username, cmd, "cmd")
+            clientSocket.send(cmdMsg.encode())  # send command
+            response = clientSocket.recv(1024).decode()  # recv active list
+            sender, msgType, msgContent = extractMsgHeader(response)
+
+            print(msgContent)
             break
-        # if cmd == '/fetch': #do nothing
 
-        if cmd.startswith('/connect'):
-            if msgContent.startswith('/accept'):  # start private message
+        elif cmd == '/fetch':
+            cmdMsg = formatMessage(username, cmd, "cmd")
+            clientSocket.send(cmdMsg.encode())
+            response = clientSocket.recv(1024).decode()  # recv active list
+            sender, msgType, msgContent = extractMsgHeader(response)
+
+            print(msgContent)
+            continue
+
+        elif cmd.startswith('/connect'):
+            cmdMsg = formatMessage(username, cmd, "cmd")
+            clientSocket.send(cmdMsg.encode())
+            response = clientSocket.recv(1024).decode()
+            sender, msgType, msgContent = extractMsgHeader(response)
+            if msgContent.startswith('/accept'):  # reply from receiver
+                os.system('cls')
+                print("You have join a private conversation. Type '/esc' to quit.")
                 break
 
 # join chatroom
