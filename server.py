@@ -72,7 +72,7 @@ def userThread(connection, address, senderName):
                                 pmUser = (conn, clientList[conn]['username'])
                                 forwdMsg = formatMessage('[system]', '/accept', 'cmd')
                                 conn.send(forwdMsg.encode())
-                                publish(username + " has left.", connection, '[system]')
+                                publish(senderName + " has left.", connection, '[system]')
                                 #publish(clientList[conn]['username'] + " has left!", conn, '[system]')
                                 break
 
