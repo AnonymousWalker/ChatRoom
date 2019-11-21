@@ -1,6 +1,7 @@
 from socket import *
 from _thread import *
 from threading import *
+import time
 
 CONNECTION_LIMIT = 10
 serverSocket = socket(AF_INET, SOCK_STREAM)
@@ -119,8 +120,17 @@ def extractMsgHeader(message):
     messageContent = message[4].split(' ', 1)[1]
     return (username, messageType, messageContent)
 
+def displayAllUsers():
+    while True:
+        time.sleep(30)      # repeat every 30sec
+        if len(clientList):
+            print("Connected clients:")
+            for user in clientList:
+                print(clientList[user]['username']+" ("+clientList[user]['ip']+"/"+str(clientList[user]['port'])+")")
 
-# server establish new incoming connections
+
+Thread(target=displayAllUsers).start()      # periodically display client list
+
 while True:
     connection, cAddress = serverSocket.accept()
 
